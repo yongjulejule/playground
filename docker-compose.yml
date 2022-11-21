@@ -1,0 +1,26 @@
+services:
+  playground:
+    image: ghcr.io/yongjulejule/playground:v1.0.0
+    container_name: PLAY
+    entrypoint: ["sleep", "infinity"]
+    init: true
+    volumes:
+      - PLAYGROUND_VOLUME:/root/playground
+    networks:
+      - playground
+
+volumes:
+  PLAYGROUND_VOLUME:
+    name: PLAYGROUND_VOLUME
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${HOME:-/home/yongjule}/playground/
+
+networks:
+  playground:
+    name: playground
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.name: playground
