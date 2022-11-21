@@ -11,7 +11,5 @@ RUN apt update && apt install -y gcc g++ vim git curl
 RUN bash -c "$(curl -fsSL https://raw.githubusercontent.com/ohmybash/oh-my-bash/master/tools/install.sh)" && \
 		sed -i 's/OSH_THEME="robbyrussell"/OSH_THEME="agnoster"/g' ~/.bashrc 
 
-entrypoint ["/bin/bash"]
 
-VOLUME [ "/playground" ]
-
+VOLUME ["/root/playground"]
