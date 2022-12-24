@@ -1,0 +1,12 @@
+{
+	"scripts": {
+		"prestart": "npm run build",
+		"start": "node ./gretter.js",
+		"build": "tsc -p .",
+		"nodemon": "nodemon ./gretter.ts"
+	},
+	"dependencies": {
+		"@type-challenges/utils": "^0.1.1",
+		"npm": "^9.2.0"
+	}
+}
