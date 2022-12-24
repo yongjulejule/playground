@@ -2,27 +2,25 @@ import {
   Controller,
   Get,
   Post,
-  Put,
-  Delete,
-  Header,
-  Redirect,
-  Query,
   Param,
   Body,
   ParseIntPipe,
-  UsePipes,
+  UseGuards,
 } from '@nestjs/common';
 
 import { CreateCatDto } from './dto/create-cat.dto';
-import { UpdateCatDto } from './dto/update-cat.dto';
 import { CatsService } from './cats.service';
 import { ValidationPipe } from './validation/validation.pipe';
+import { Roles } from '../roles.decorator';
+import { RolesGuard } from '../roles.guard';
 
+@UseGuards(RolesGuard)
 @Controller('cats')
 export class CatsController {
   constructor(private catsService: CatsService) {}
 
   @Post()
+  @Roles('admin')
   async create(@Body(new ValidationPipe()) createCatDto: CreateCatDto) {
     this.catsService.create(createCatDto);
   }
@@ -33,7 +31,7 @@ export class CatsController {
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number): Promise<CreateCatDto> {
+  findOne(@Param('id', ParseIntPipe) id: number): CreateCatDto {
     return this.catsService.findOne(id);
   }
 }

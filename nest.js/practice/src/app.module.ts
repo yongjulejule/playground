@@ -8,9 +8,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CatsModule } from './cats/cats.module';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import { FullNestModule } from './full-nest/full-nest.module';
 
 @Module({
-  imports: [CatsModule],
+  imports: [CatsModule, FullNestModule],
   controllers: [AppController],
   providers: [AppService],
 })
