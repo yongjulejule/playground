@@ -1,24 +1,30 @@
-import {
-  Module,
-  NestModule,
-  RequestMethod,
-  MiddlewareConsumer,
-} from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CatsModule } from './cats/cats.module';
-import { LoggerMiddleware } from './middleware/logger.middleware';
 import { FullNestModule } from './full-nest/full-nest.module';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { UsersTest } from './usersTest/users-test.model';
+import { UsersTestModule } from './usersTest/users-test.module';
 
 @Module({
-  imports: [CatsModule, FullNestModule],
+  imports: [
+    CatsModule,
+    FullNestModule,
+    SequelizeModule.forRoot({
+      dialect: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'jun',
+      password: 'junjun',
+      database: 'jun',
+      // autoLoadModels: true,
+      // synchronize: true,
+      models: [UsersTest],
+    }),
+    UsersTestModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(LoggerMiddleware)
-      .forRoutes({ path: 'cats', method: RequestMethod.POST });
-  }
-}
+export class AppModule {}
