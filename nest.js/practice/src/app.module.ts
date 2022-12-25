@@ -6,9 +6,11 @@ import { FullNestModule } from './full-nest/full-nest.module';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { UsersTest } from './usersTest/users-test.model';
 import { UsersTestModule } from './usersTest/users-test.module';
+import { ConfigModule } from './config/config.module';
 
 @Module({
   imports: [
+    ConfigModule.register({ folder: './config' }),
     CatsModule,
     FullNestModule,
     SequelizeModule.forRoot({
@@ -18,8 +20,8 @@ import { UsersTestModule } from './usersTest/users-test.module';
       username: 'jun',
       password: 'junjun',
       database: 'jun',
-      // autoLoadModels: true,
-      // synchronize: true,
+      autoLoadModels: true,
+      synchronize: true,
       models: [UsersTest],
     }),
     UsersTestModule,

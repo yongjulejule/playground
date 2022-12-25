@@ -7,10 +7,12 @@ import {
   Post,
   UseInterceptors,
 } from '@nestjs/common';
-import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
+import { ApiTags } from '@nestjs/swagger';
+import { LoggingInterceptor } from '../common/interceptors/logging.interceptor';
 import { CreateUsersTestDto } from './dto/create-users-test.dto';
 import { UsersTestService } from './users-test.service';
 
+@ApiTags('users-test')
 @Controller('users-test')
 @UseInterceptors(LoggingInterceptor)
 export class UsersTestController {

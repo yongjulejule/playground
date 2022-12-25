@@ -2,6 +2,7 @@
 import { Module } from '@nestjs/common';
 import { FullNestService } from './full-nest.service';
 import { FullNestController } from './full-nest.controller';
+import { ConfigModule } from '../config/config.module';
 
 /**
  * @Global() : 모든 모듈에서 사용할 수 있도록 함
@@ -19,6 +20,7 @@ import { FullNestController } from './full-nest.controller';
 @Module({
   controllers: [FullNestController],
   providers: [FullNestService],
+  imports: [ConfigModule.register({ folder: './config' })],
 })
 export class FullNestModule {
   // 여기서도 providers 를 inject 할 수 있음

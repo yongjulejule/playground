@@ -19,9 +19,10 @@ import { Roles } from '../common/decorators/roles.decorator';
 import { LoggingInterceptor } from '../common/interceptors/logging.interceptor';
 import { TransformInterceptor } from '../common/interceptors/transform.interceptor';
 import { TimeoutInterceptor } from '../common/interceptors/timeout.interceptor';
+import { ApiTags } from '@nestjs/swagger';
 
 // @Controller(arg) : arg 를 라우팅 경로로 사용하는 컨트롤러를 생성
-// @param arg : string | string[] , 라우팅할 경로를 지정하며 정규식의 일부 ("*", "+", "?", "(", ")" ) 를 사용할 수 있음
+// @param arg : string | string[] , 라우팅할 경로를 지정하며 정규식의 일부 ("*", "+", "?", "(", ")" ) 를 사용할 수 있음 @ApiTags('full-nest')
 @Controller('full-nest')
 // @UseGuards() : 사용할 Guard 를 지정. 여러개의 Guard 를 사용할 수 있음
 @UseGuards(RolesGuard)
@@ -55,13 +56,18 @@ export class FullNestController {
   // @Roles() 는 RolesGuard 에서 reflector 을 통하여 roles 를 받아오는데 사용됨
   findAll(@Query() query: any) {
     console.log(query);
-    return this.fullNestService.findAll();
+    return `${this.fullNestService.findAll()}`;
   }
 
   @Get(':id')
   @UseInterceptors(TransformInterceptor)
   findOne(@Param('id') id: string) {
-    return this.fullNestService.findOne(+id);
+    if (id == '1') {
+      this.fullNestService.getHello();
+    }
+    return `${this.fullNestService.getHello()}\n${this.fullNestService.findOne(
+      +id,
+    )}`;
   }
 
   @Patch(':id')

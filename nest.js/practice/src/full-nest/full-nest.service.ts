@@ -8,11 +8,21 @@
 import { Injectable } from '@nestjs/common';
 import { CreateFullNestDto } from './dto/create-full-nest.dto';
 import { UpdateFullNestDto } from './dto/update-full-nest.dto';
+import { ConfigService } from '../config/config.service';
 
 /*  @Injectable() : attaches metadata, which declares that FullNestService is 
 		a class that can be managed by the Nest IoC(Inversion of Control) container */
 @Injectable()
 export class FullNestService {
+  private configMsg: string;
+  constructor(configService: ConfigService) {
+    this.configMsg = configService.get('CONFIG_MSG');
+  }
+
+  getHello(): string {
+    return this.configMsg;
+  }
+
   create(createFullNestDto: CreateFullNestDto) {
     return 'This action adds a new fullNest';
   }
