@@ -14,11 +14,11 @@ import {
 import { FullNestService } from './full-nest.service';
 import { CreateFullNestDto } from './dto/create-full-nest.dto';
 import { UpdateFullNestDto } from './dto/update-full-nest.dto';
-import { RolesGuard } from '../roles.guard';
-import { Roles } from '../roles.decorator';
-import { LoggingInterceptor } from '../logging.interceptor';
-import { TransformInterceptor } from '../transform.interceptor';
-import { TimeoutInterceptor } from '../timeout.interceptor';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Roles } from '../common/decorators/roles.decorator';
+import { LoggingInterceptor } from '../common/interceptors/logging.interceptor';
+import { TransformInterceptor } from '../common/interceptors/transform.interceptor';
+import { TimeoutInterceptor } from '../common/interceptors/timeout.interceptor';
 
 // @Controller(arg) : arg 를 라우팅 경로로 사용하는 컨트롤러를 생성
 // @param arg : string | string[] , 라우팅할 경로를 지정하며 정규식의 일부 ("*", "+", "?", "(", ")" ) 를 사용할 수 있음

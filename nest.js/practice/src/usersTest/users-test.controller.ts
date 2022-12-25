@@ -7,7 +7,7 @@ import {
   Post,
   UseInterceptors,
 } from '@nestjs/common';
-import { LoggingInterceptor } from 'src/logging.interceptor';
+import { LoggingInterceptor } from 'src/common/interceptors/logging.interceptor';
 import { CreateUsersTestDto } from './dto/create-users-test.dto';
 import { UsersTestService } from './users-test.service';
 

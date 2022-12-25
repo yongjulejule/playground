@@ -11,8 +11,8 @@ import {
 import { CreateCatDto } from './dto/create-cat.dto';
 import { CatsService } from './cats.service';
 import { ValidationPipe } from './validation/validation.pipe';
-import { Roles } from '../roles.decorator';
-import { RolesGuard } from '../roles.guard';
+import { Roles } from '../common/decorators/roles.decorator';
+import { RolesGuard } from '../common/guards/roles.guard';
 
 @UseGuards(RolesGuard)
 @Controller('cats')
