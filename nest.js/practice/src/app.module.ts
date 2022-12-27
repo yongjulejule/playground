@@ -7,12 +7,19 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { UsersTest } from './usersTest/users-test.model';
 import { UsersTestModule } from './usersTest/users-test.module';
 import { ConfigModule } from './config/config.module';
+import { EventsModule } from './events/events.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
+    EventsModule,
     ConfigModule.register({ folder: './config' }),
     CatsModule,
     FullNestModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'client'),
+    }),
     SequelizeModule.forRoot({
       dialect: 'postgres',
       host: 'localhost',
