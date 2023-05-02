@@ -6,7 +6,8 @@
 		"jsx": "react",
 		"strictNullChecks": true,
 		"strictFunctionTypes": true,
-		"sourceMap": true
+		"sourceMap": true,
+		"experimentalDecorators": true
 	},
 	"exclude": [
 		"node_modules",
