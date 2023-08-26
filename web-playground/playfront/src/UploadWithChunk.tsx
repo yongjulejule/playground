@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { URL } from './constants';
 
+const CHUNK_COUNT = 1;
+
 interface UploadIdDto {
   uploadId: string;
   completeUrl: string;
@@ -65,17 +67,17 @@ const UploadChunk = async (
   return { eTag: res.headers.get('ETag')!, partNumber: partNumber };
 };
 
-const completeXmlBuilder = (parts: UploadChunkDto[]) => {
-  let xml = `<?xml version="1.0" encoding="UTF-8"?><CompleteMultipartUpload xmlns="http://s3.amazonaws.com/doc/2006-03-01/">`;
-  parts.forEach((part) => {
-    xml += `<Part><ETag>${part.eTag}</ETag><PartNumber>${part.partNumber}</PartNumber></Part>`;
-  });
-  xml += `</CompleteMultipartUpload>`;
-  return xml;
-};
+// const completeXmlBuilder = (parts: UploadChunkDto[]) => {
+//   let xml = `<?xml version="1.0" encoding="UTF-8"?><CompleteMultipartUpload xmlns="http://s3.amazonaws.com/doc/2006-03-01/">`;
+//   parts.forEach((part) => {
+//     xml += `<Part><ETag>${part.eTag}</ETag><PartNumber>${part.partNumber}</PartNumber></Part>`;
+//   });
+//   xml += `</CompleteMultipartUpload>`;
+//   return xml;
+// };
 
 const CompleteMultipartUpload = async (
-  presignedUrl: string,
+  // presignedUrl: string,
   uploadId: string,
   key: string,
   parts: UploadChunkDto[],
@@ -97,19 +99,17 @@ export function UploadWithChunk() {
         onClick={async () => {
           const file = document.getElementById('file') as HTMLInputElement;
           const fileData = file.files?.[0];
+          setSize(fileData?.size || 0);
           if (!fileData) {
             alert('파일을 선택해주세요.');
             return;
           }
-          setSize(file.size);
+          const prevTime = Date.now();
           const url = URL;
-          const key = 'test-name.mp4';
-          const { uploadId, completeUrl } = await GetMultipartUploadId(
-            url,
-            key,
-          );
-          const chunkSize = 100 * 1024 * 1024;
-          const chunkCount = Math.ceil(fileData.size / chunkSize);
+          const key = `test-${Date.now().toString() + fileData.type}`;
+          const { uploadId } = await GetMultipartUploadId(url, key);
+          const chunkCount = CHUNK_COUNT;
+          const chunkSize = Math.ceil(fileData.size / chunkCount);
           const chunkArray = Array.from({ length: chunkCount }, (_, i) => i);
           const chunkPromiseArray = await Promise.all(
             chunkArray.map((count) => {
@@ -129,12 +129,16 @@ export function UploadWithChunk() {
             }),
           );
           CompleteMultipartUpload(
-            completeUrl,
+            // completeUrl,
             uploadId,
             key,
             chunkPromiseArray,
           );
-          alert('업로드 완료');
+          alert(
+            `업로드 완료, 소요시간: ${
+              Date.now() - prevTime
+            }ms, chunkSize = ${chunkSize} `,
+          );
           setSize(0);
         }}
       >

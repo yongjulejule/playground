@@ -211,7 +211,7 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .wrap(Cors::permissive())
-            .wrap(Logger::default())
+             .wrap(Logger::default())
             .service(hello)
             .service(echo)
             // generate parent route named s3
