@@ -1,96 +1,13 @@
 import { useState } from 'react';
 import { URL } from './constants';
+import {
+  CompleteMultipartUpload,
+  GetMultipartPresignedUrl,
+  GetMultipartUploadId,
+  UploadChunk,
+} from './APIs';
 
-const CHUNK_COUNT = 1;
-
-interface UploadIdDto {
-  uploadId: string;
-  completeUrl: string;
-}
-
-const GetMultipartUploadId = async (
-  url: string,
-  key: string,
-): Promise<UploadIdDto> => {
-  const res = await fetch(`${url}/s3/멀티파트/업로드-아이디?key=${key}`, {
-    method: 'GET',
-    headers: { 'Content-Type': 'application/json' },
-  });
-  return await res.json();
-};
-
-const ChunkData = async (
-  data: Promise<ArrayBuffer>,
-  count: number,
-  chunkSize: number,
-): Promise<ArrayBuffer> => {
-  const buffer = await data;
-  return buffer.slice(count * chunkSize, (count + 1) * chunkSize);
-};
-
-interface PresignedUrlDto {
-  presignedUrl: string;
-}
-
-const GetMultipartPresignedUrl = async (
-  url: string,
-  key: string,
-  uploadId: string,
-  part: number,
-): Promise<PresignedUrlDto> => {
-  console.log('get parts: ', part);
-  const res = await fetch(
-    `${url}/s3/멀티파트/미리서명된-주소?key=${key}&uploadId=${uploadId}&part=${part}`,
-    {
-      method: 'GET',
-      headers: { 'Content-Type': 'application/json' },
-    },
-  );
-  return await res.json();
-};
-
-interface UploadChunkDto {
-  eTag: string;
-  partNumber: number;
-}
-
-const UploadChunk = async (
-  presignedUrl: string,
-  chunk: ArrayBuffer,
-  partNumber: number,
-): Promise<UploadChunkDto> => {
-  const res = await fetch(presignedUrl, {
-    method: 'PUT',
-    body: chunk,
-  });
-
-  return { eTag: res.headers.get('ETag')!, partNumber: partNumber };
-};
-
-// const completeXmlBuilder = (parts: UploadChunkDto[]) => {
-//   let xml = `<?xml version="1.0" encoding="UTF-8"?><CompleteMultipartUpload xmlns="http://s3.amazonaws.com/doc/2006-03-01/">`;
-//   parts.forEach((part) => {
-//     xml += `<Part><ETag>${part.eTag}</ETag><PartNumber>${part.partNumber}</PartNumber></Part>`;
-//   });
-//   xml += `</CompleteMultipartUpload>`;
-//   return xml;
-// };
-
-const CompleteMultipartUpload = async (
-  // presignedUrl: string,
-  uploadId: string,
-  key: string,
-  parts: UploadChunkDto[],
-) => {
-  const res = await fetch(`${URL}/s3/멀티파트/업로드-완`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ parts: parts, uploadId, key }),
-    mode: 'cors',
-  });
-  return res.status;
-};
-
+const CHUNK_COUNT = 12;
 export function UploadWithChunk() {
   const [size, setSize] = useState(0);
   return (
@@ -99,21 +16,23 @@ export function UploadWithChunk() {
         onClick={async () => {
           const file = document.getElementById('file') as HTMLInputElement;
           const fileData = file.files?.[0];
-          setSize(fileData?.size || 0);
           if (!fileData) {
             alert('파일을 선택해주세요.');
             return;
           }
-          const prevTime = Date.now();
+          setSize(fileData.size);
           const url = URL;
-          const key = `test-${Date.now().toString() + fileData.type}`;
+          const key = `test-${new Date().toISOString()}`;
           const { uploadId } = await GetMultipartUploadId(url, key);
           const chunkCount = CHUNK_COUNT;
           const chunkSize = Math.ceil(fileData.size / chunkCount);
           const chunkArray = Array.from({ length: chunkCount }, (_, i) => i);
+          const prevTime = Date.now();
           const chunkPromiseArray = await Promise.all(
             chunkArray.map((count) => {
-              const chunk = ChunkData(fileData.arrayBuffer(), count, chunkSize)
+              const chunk = fileData
+                .slice(count * chunkSize, (count + 1) * chunkSize)
+                .arrayBuffer()
                 .then((chunkedData) =>
                   GetMultipartPresignedUrl(url, key, uploadId, count + 1).then(
                     (res) => ({
@@ -128,17 +47,8 @@ export function UploadWithChunk() {
               return chunk;
             }),
           );
-          CompleteMultipartUpload(
-            // completeUrl,
-            uploadId,
-            key,
-            chunkPromiseArray,
-          );
-          alert(
-            `업로드 완료, 소요시간: ${
-              Date.now() - prevTime
-            }ms, chunkSize = ${chunkSize} `,
-          );
+          CompleteMultipartUpload(url, uploadId, key, chunkPromiseArray);
+          alert(`소요시간: ${Date.now() - prevTime}ms`);
           setSize(0);
         }}
       >

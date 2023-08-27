@@ -5,10 +5,19 @@ import { UploadWithChunk } from './UploadWithChunk';
 import { UploadWithoutChunk } from './UploadWithoutChunk';
 import { UploadWithChunkResult } from './UploadWithChunkResult';
 import { UploadWithoutChunkResult } from './UploadWithoutChunkResult';
+import { UploadWithChunkWithWorker } from './UploadWithChunkWithWorker';
 
 function App() {
   const [count, setCount] = useState(0);
   const [tab1, setTab1] = useState(0);
+  const tabs = [
+    <DefaultTab count={count} setCount={setCount} />,
+    <UploadWithoutChunk />,
+    <UploadWithChunk />,
+    <UploadWithoutChunkResult />,
+    <UploadWithChunkResult />,
+    <UploadWithChunkWithWorker />,
+  ];
 
   return (
     <>
@@ -22,13 +31,11 @@ function App() {
         <button onClick={() => setTab1(4)}>
           짤라서 보낸 결과를 한번 볼까?
         </button>
+        <button onClick={() => setTab1(5)}>
+          짤라서 다른 쓰레드한테 일을 시켜볼까?
+        </button>
       </div>
-
-      {tab1 === 0 && <DefaultTab count={count} setCount={setCount} />}
-      {tab1 === 1 && <UploadWithoutChunk />}
-      {tab1 === 2 && <UploadWithChunk />}
-      {tab1 === 3 && <UploadWithoutChunkResult />}
-      {tab1 === 4 && <UploadWithChunkResult />}
+      {tabs[tab1]}
     </>
   );
 }

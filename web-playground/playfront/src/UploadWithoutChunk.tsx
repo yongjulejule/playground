@@ -28,19 +28,16 @@ export function UploadWithoutChunk() {
           const url = URL;
           const file = document.getElementById('file2') as HTMLInputElement;
           const fileData = file.files?.[0];
-          setSize(fileData?.size || 0);
           if (!fileData) {
             alert('파일을 선택해주세요.');
             return;
           }
+          setSize(fileData.size);
           const prevTime = Date.now();
           const { presignedUrl } = await GetPresignedUrl(url, fileData.name);
           await UploadFile(presignedUrl, fileData);
-          alert(
-            `업로드 완료. 용량: ${fileData.size / 1000}KB, 소요시간: ${
-              Date.now() - prevTime
-            }ms`,
-          );
+          alert(`소요시간: ${Date.now() - prevTime}ms`);
+          setSize(0);
         }}
       >
         프리사인드로 요청을 날려볼까? size : {size / 1000 / 1000}MB
