@@ -14,7 +14,7 @@ export interface UploadChunkDto {
 
 export const GetMultipartUploadId = async (
   url: string,
-  key: string,
+  key: string
 ): Promise<UploadIdDto> => {
   const res = await fetch(`${url}/s3/멀티파트/업로드-아이디?key=${key}`, {
     method: 'GET',
@@ -27,7 +27,7 @@ export const GetMultipartPresignedUrl = async (
   url: string,
   key: string,
   uploadId: string,
-  part: number,
+  part: number
 ): Promise<PresignedUrlDto> => {
   console.log('get parts: ', part);
   const res = await fetch(
@@ -35,19 +35,19 @@ export const GetMultipartPresignedUrl = async (
     {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
-    },
+    }
   );
   return await res.json();
 };
 
 export const UploadChunk = async (
   presignedUrl: string,
-  chunk: ArrayBuffer,
-  partNumber: number,
+  chunk: Promise<ArrayBuffer>,
+  partNumber: number
 ): Promise<UploadChunkDto> => {
   const res = await fetch(presignedUrl, {
     method: 'PUT',
-    body: chunk,
+    body: await chunk,
   });
   return { eTag: res.headers.get('ETag')!, partNumber: partNumber };
 };
@@ -56,7 +56,7 @@ export const CompleteMultipartUpload = async (
   url: string,
   uploadId: string,
   key: string,
-  parts: UploadChunkDto[],
+  parts: UploadChunkDto[]
 ) => {
   const res = await fetch(`${url}/s3/멀티파트/업로드-완`, {
     method: 'POST',
