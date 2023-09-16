@@ -19,12 +19,10 @@ fn 나의_멋진_랜덤(min: i32, max: i32) -> i32 {
 
 #[test]
 fn 나의_멋진_랜덤_테스트() {
-    let mut i = 0;
     println!("얘도 테스트가 데코레이터같은걸로 되네 자스는 왜 안됨? 얼탱");
-    while i < 100 {
+    for _ in 0..100 {
         let guess = 나의_멋진_랜덤(1, 100);
         assert!(guess >= 1 && guess <= 100);
-        i += 1;
     }
 }
 
@@ -59,6 +57,9 @@ fn main() {
     // i32_vector.print();
 
     println!("your guessed: {}", guess);
+
+    let three = Some(3);
+    println!("{:?}", three.unwrap());
 
     println!("랜덤을 생성하라는데 /dev/urandom 에서 read_line 한 뒤 숫자로 잘 변환하면 안됨?");
     나의_멋진_랜덤(1, 100);
