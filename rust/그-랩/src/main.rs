@@ -5,10 +5,10 @@ use std::{env, process};
 use grep::Config;
 
 fn main() {
-    let args = env::args().collect::<Vec<String>>();
-    let config = Config::new(&args).unwrap_or_else(|err| {
+    let args = env::args();
+    let config = Config::build(args).unwrap_or_else(|err| {
         eprintln!("Problem parsing arguments: {}", err);
-        eprintln!("Usage: {} <needle> <filename>", args[0]);
+        eprintln!("Usage: {} <needle> <filename>", env::args().next().unwrap());
         process::exit(1);
     });
 
