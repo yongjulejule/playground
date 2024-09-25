@@ -1,0 +1,13 @@
+FROM public.ecr.aws/lambda/nodejs:20
+
+WORKDIR ${LAMBDA_TASK_ROOT}
+
+RUN corepack enable
+
+# Install Puppeteer
+COPY . .
+
+RUN pnpm i --frozen-lockfile
+
+
+CMD [ "index.handler" ]
