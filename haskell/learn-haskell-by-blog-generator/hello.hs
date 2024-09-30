@@ -1,3 +1,16 @@
-main = putStrLn myhtml
+import Html
 
-myhtml = "<html><body>Hello, World!</body></html>"
+main :: IO ()
+main = putStrLn (render myhtml)
+
+myhtml :: Html
+myhtml =
+  html_
+    "My title"
+    ( append_
+      (h1_ "Heading")
+      ( append_
+        (p_ "Paragraph #1")
+        (p_ "Paragraph #2")
+      )
+    )
