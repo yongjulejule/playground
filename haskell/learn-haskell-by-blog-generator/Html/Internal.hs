@@ -34,6 +34,9 @@ escape =
 p_ :: String -> Structure
 p_ = Structure . el "p" . escape
 
+code_ :: String -> Structure
+code_ = Structure . el "pre" . escape
+
 h1_ :: String -> Structure
 h1_ = Structure . el "h1" . escape
 
@@ -41,13 +44,17 @@ el :: String -> String -> String
 el tag content =
   "<" <> tag <> ">" <> content <> "</" <> tag <> ">"
 
-li_ :: String -> Structure
-li_ = Structure . el "li" . escape
-
 ul_ :: [Structure] -> Structure
 ul_ =
   Structure
     . el "ul"
+    . concat
+    . map (el "li" . escape . getStructureString)
+
+ol_ :: [Structure] -> Structure
+ol_ =
+  Structure
+    . el "ol"
     . concat
     . map (el "li" . escape . getStructureString)
 
