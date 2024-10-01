@@ -42,6 +42,16 @@ el :: String -> String -> String
 el tag content =
   "<" <> tag <> ">" <> content <> "</" <> tag <> ">"
 
+li_ :: String -> Structure
+li_ = Structure . el "li" . escape
+
+ul_ :: [Structure] -> Structure
+ul_ = Structure 
+  . el "ul" 
+    . concat 
+        . map (el "li" . escape. getStructureString)
+
+
 append_ :: Structure -> Structure -> Structure
 append_ c1 c2 =
   Structure (getStructureString c1 <> getStructureString c2)
