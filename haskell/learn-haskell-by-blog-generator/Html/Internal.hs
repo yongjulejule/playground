@@ -6,31 +6,30 @@ newtype Html
 newtype Structure
   = Structure String
 
-type Title
-  = String
+type Title =
+  String
 
 html_ :: Title -> Structure -> Html
 html_ title content =
   Html
-    ( el "html"
-      ( el "head" (el "title" (escape title))
-        <> el "body" (getStructureString content)
-      )
+    ( el
+        "html"
+        ( el "head" (el "title" (escape title))
+            <> el "body" (getStructureString content)
+        )
     )
 
 escape :: String -> String
 escape =
-  let 
-    escaped c =
-      case c of
-        '<' -> "&lt;"
-        '>' -> "&gt;"
-        '&' -> "&amp;"
-        '"' -> "&quot;"
-        '\'' -> "&apos;"
-        _ ->  [c]
-  in 
-    concat . map escaped
+  let escaped c =
+        case c of
+          '<' -> "&lt;"
+          '>' -> "&gt;"
+          '&' -> "&amp;"
+          '"' -> "&quot;"
+          '\'' -> "&apos;"
+          _ -> [c]
+   in concat . map escaped
 
 p_ :: String -> Structure
 p_ = Structure . el "p" . escape
@@ -46,11 +45,11 @@ li_ :: String -> Structure
 li_ = Structure . el "li" . escape
 
 ul_ :: [Structure] -> Structure
-ul_ = Structure 
-  . el "ul" 
-    . concat 
-        . map (el "li" . escape. getStructureString)
-
+ul_ =
+  Structure
+    . el "ul"
+    . concat
+    . map (el "li" . escape . getStructureString)
 
 append_ :: Structure -> Structure -> Structure
 append_ c1 c2 =
