@@ -49,14 +49,14 @@ ul_ =
   Structure
     . el "ul"
     . concat
-    . map (el "li" . escape . getStructureString)
+    . map (el "li" . getStructureString)
 
 ol_ :: [Structure] -> Structure
 ol_ =
   Structure
     . el "ol"
     . concat
-    . map (el "li" . escape . getStructureString)
+    . map (el "li" . getStructureString)
 
 append_ :: Structure -> Structure -> Structure
 append_ c1 c2 =

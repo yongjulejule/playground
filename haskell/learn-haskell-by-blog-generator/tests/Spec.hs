@@ -1,5 +1,6 @@
 -- tests/Spec.hs
 import Test.Hspec
+import Html
 
 main :: IO ()
 main = hspec $ do

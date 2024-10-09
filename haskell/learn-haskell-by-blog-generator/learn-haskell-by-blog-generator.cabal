@@ -53,32 +53,24 @@ extra-doc-files:    CHANGELOG.md
 common warnings
     ghc-options: -Wall
 
+library
+  hs-source-dirs: src
+  exposed-modules: Html
+  other-modules: Html.Internal
+  build-depends: base
+  default-language: Haskell2010
+
 executable learn-haskell-by-blog-generator
-    -- Import common warning flags.
     import:           warnings
-
-    -- .hs or .lhs file containing the Main module.
-    main-is:          Main.hs
-
-    -- Modules included in this executable, other than Main.
-    -- other-modules:
-
-    -- LANGUAGE extensions used by modules in this package.
-    -- other-extensions:
-
-    -- Other library packages from which modules are imported.
-    build-depends:    base ^>=4.17.2.1, hspec
-
-    -- Directories containing source files.
+    main-is:          Hello.hs
+    build-depends:    base ^>=4.17.2.1, learn-haskell-by-blog-generator
     hs-source-dirs:   app
-
-    -- Base language which the package is written in.
     default-language: Haskell2010
 
 test-suite test
   type: exitcode-stdio-1.0
   hs-source-dirs: tests
   main-is: Spec.hs
-  build-depends: base, hspec
+  build-depends: base, hspec, learn-haskell-by-blog-generator
   default-language: Haskell2010
 
