@@ -14,7 +14,7 @@ common warnings
 library
   hs-source-dirs: src
   -- Html.Internal Module is exposed for testing. I think it is not a good idea but I don't know how to test it without exposing it.
-  exposed-modules: Html, Html.Internal 
+  exposed-modules: Html, Html.Internal, Markup
   -- other-modules: Html.Internal
   build-depends: base
   default-language: Haskell2010
