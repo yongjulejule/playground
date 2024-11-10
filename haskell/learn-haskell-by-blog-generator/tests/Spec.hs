@@ -2,7 +2,7 @@ module Main where
 
 import Html.Internal (Structure, append_, code_, el, escape, getStructureString, h1_, html_, ol_, p_, render, ul_)
 import Markup (Document, Structure (..))
-import Playground (hello)
+import Playground (contrivedAdd, even, hello, odd, rep)
 import Test.Hspec
 
 main :: IO ()
@@ -71,3 +71,13 @@ main = hspec $ do
   describe "Playground" $ do
     it "should say hello to world" $ do
       hello "world" `shouldBe` "Hello world"
+    it "should add given number" $ do
+      contrivedAdd 2 3 `shouldBe` 5
+    it "should be replicate value" $ do
+      rep 3 42 `shouldBe` [42, 42, 42]
+    it "should be check even or not" $ do
+      Playground.even 2 `shouldBe` True
+      Playground.even 1025 `shouldBe` False
+    it "should be check odd or not" $ do
+      Playground.odd 3 `shouldBe` True
+      Playground.odd 65536 `shouldBe` False
