@@ -1,9 +1,8 @@
 module Main where
 
 import Html.Internal (Structure, append_, code_, el, escape, getStructureString, h1_, html_, ol_, p_, render, ul_)
-
-import Markup (Document, Structure(..))
-
+import Markup (Document, Structure (..))
+import Playground (hello)
 import Test.Hspec
 
 main :: IO ()
@@ -52,20 +51,23 @@ main = hspec $ do
       it "is a list of structures" $ do
         let doc :: Document
             doc = [Heading 1 "Header", Paragraph "Content"]
-        case doc of 
+        case doc of
           [Heading level title, Paragraph content] -> do
             level `shouldBe` 1
             title `shouldBe` "Header"
             content `shouldBe` "Content"
           _ -> expectationFailure "Expected a Heading and a Paragraph"
 
--- Extra Section for study purposes
+  -- Extra Section for study purposes
 
   describe "extra section" $ do
     describe "simple summation with curring" $ do
       it "sums two numbers" $ do
         let add :: Int -> Int -> Int
             add x y = x + y
-        let add2 = add 2 
+        let add2 = add 2
         add2 3 `shouldBe` 5
-        
+
+  describe "Playground" $ do
+    it "should say hello to world" $ do
+      hello "world" `shouldBe` "Hello world"
