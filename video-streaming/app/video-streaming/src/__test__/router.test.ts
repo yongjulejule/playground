@@ -2,10 +2,10 @@ import { IncomingMessage, ServerResponse } from 'http';
 import { describe, expect, it, vi } from 'vitest';
 import { sendResponse } from '../response';
 import { routeRequest } from '../router';
-import { handleVideoRequest } from '../video';
+import { handleVideoRequest } from '../video/controller';
 
 vi.mock('../response');
-vi.mock('../video');
+vi.mock('../video/controller');
 
 describe('routeRequest', () => {
   it('should call handleVideoRequest for GET /video', () => {

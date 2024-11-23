@@ -4,7 +4,7 @@ import * as path from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import * as response from '../response';
 import * as debugUtils from '../utils/debug-utils';
-import { handleVideoRequest } from '../video';
+import { handleVideoRequest } from './controller';
 
 vi.mock('node:fs');
 vi.mock('node:path');

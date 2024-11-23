@@ -13,7 +13,7 @@ services:
       - DEBUG=true
       - PORT=${PORT:-8080}
       - NODE_ENV=${NODE_ENV:-local}
-      - MONGO_URI=${MONGO_URI:-mongodb://mongo:27017/video-streaming}
+      - MONGO_URI=mongodb://root:example@mongo:27017/admin
 
   mongo:
     container_name: video-mongo
@@ -23,10 +23,8 @@ services:
     volumes:
       - ./data/mongo:/data/db
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-      ME_CONFIG_MONGODB_ADMINPASSWORD: example
-      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
-      ME_CONFIG_BASICAUTH: false
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
 
   video-storage:
     image: quay.io/minio/minio
