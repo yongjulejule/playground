@@ -1,0 +1,42 @@
+services:
+  video-streaming:
+    container_name: video-streaming
+    build:
+      context: ./app/video-streaming
+      dockerfile: Dockerfile
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./app/video-streaming:/app/video-streaming
+    init: true
+    environment:
+      - DEBUG=true
+      - PORT=${PORT:-8080}
+      - NODE_ENV=${NODE_ENV:-local}
+      - MONGO_URI=${MONGO_URI:-mongodb://mongo:27017/video-streaming}
+
+  mongo:
+    container_name: video-mongo
+    image: mongo:latest
+    ports:
+      - '27017:27017'
+    volumes:
+      - ./data/mongo:/data/db
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+      ME_CONFIG_BASICAUTH: false
+
+  video-storage:
+    image: quay.io/minio/minio
+    container_name: video-storage
+    ports:
+      - '9000:9000' # MinIO API 포트
+      - '9001:9001' # MinIO 콘솔 포트
+    environment:
+      MINIO_ROOT_USER: minioadmin # 관리자 계정 ID
+      MINIO_ROOT_PASSWORD: minioadmin # 관리자 비밀번호
+    volumes:
+      - ./data/min-io:/data # 데이터 persistence를 위한 볼륨
+    command: server /data --console-address ":9001"
