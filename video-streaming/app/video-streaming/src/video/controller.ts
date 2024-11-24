@@ -1,5 +1,14 @@
 import { IncomingMessage, ServerResponse } from 'http';
+import * as t from 'io-ts';
+import { parseJsonBody } from '../utils/parse-body';
 import { VideoService } from './service';
+
+const createVideoDto = t.type({
+  title: t.string,
+  path: t.string,
+  duration: t.number,
+  size: t.number,
+});
 
 export const createVideoController = (service: VideoService) => ({
   getAllVideos: async (req: IncomingMessage, res: ServerResponse) => {
@@ -8,6 +17,20 @@ export const createVideoController = (service: VideoService) => ({
       console.log('found video', videos);
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(videos));
+    } catch (err) {
+      res.writeHead(500, { 'Content-Type': 'text/plain' });
+      const message =
+        err instanceof Error ? err.message : 'Internal Server Error';
+      res.end(`Error: ${message}`);
+    }
+  },
+
+  create: async (req: IncomingMessage, res: ServerResponse) => {
+    try {
+      const body = await parseJsonBody(req, createVideoDto);
+      const video = await service.createVideo(body);
+      res.writeHead(201, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(video));
     } catch (err) {
       res.writeHead(500, { 'Content-Type': 'text/plain' });
       const message =
@@ -51,3 +74,5 @@ export const createVideoController = (service: VideoService) => ({
     }
   },
 });
+
+export type VideoController = ReturnType<typeof createVideoController>;

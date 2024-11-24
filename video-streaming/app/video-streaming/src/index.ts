@@ -5,6 +5,7 @@ import { createMongoConnection } from './db/connect';
 import { createRouter } from './router';
 import { debugAction, isDebugEnabled } from './utils/debug-utils';
 import { parsePort } from './utils/parse-port';
+import { createVideoController } from './video/controller';
 import { createVideoRepository } from './video/repository';
 import { createVideoService } from './video/service';
 
@@ -23,9 +24,10 @@ const main = () => {
         async () => {
           const repository = createVideoRepository(connection);
           const service = createVideoService(repository);
-          const router = createRouter(service);
-
+          const controller = createVideoController(service);
+          const router = createRouter(controller);
           const server = createServer(router);
+
           server.listen(port, () => {
             console.log(`Server is running on http://localhost:${port}`);
           });

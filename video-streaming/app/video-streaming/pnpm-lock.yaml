@@ -11,6 +11,9 @@ importers:
       fp-ts:
         specifier: ^2.16.9
         version: 2.16.9
+      io-ts:
+        specifier: ^2.2.21
+        version: 2.2.21(fp-ts@2.16.9)
       mongoose:
         specifier: ^8.8.2
         version: 8.8.2
@@ -664,6 +667,11 @@ packages:
 
   get-tsconfig@4.8.1:
     resolution: {integrity: sha512-k9PN+cFBmaLWtVz29SkUoqU5O0slLuHJXt/2P+tMVFT+phsSGXGkp9t3rQIqdz0e+06EHNGs3oM6ZX1s2zHxRg==}
+
+  io-ts@2.2.21:
+    resolution: {integrity: sha512-zz2Z69v9ZIC3mMLYWIeoUcwWD6f+O7yP92FMVVaXEOSZH1jnVBmET/urd/uoarD1WGBY4rCj8TAyMPzsGNzMFQ==}
+    peerDependencies:
+      fp-ts: ^2.5.0
 
   kareem@2.6.3:
     resolution: {integrity: sha512-C3iHfuGUXK2u8/ipq9LfjFfXFxAZMQJJq7vLS45r3D9Y2xQ/m4S8zaR4zMLFWh9AsNPXmcFfUDhTEO8UIC/V6Q==}
@@ -1327,6 +1335,10 @@ snapshots:
   get-tsconfig@4.8.1:
     dependencies:
       resolve-pkg-maps: 1.0.0
+
+  io-ts@2.2.21(fp-ts@2.16.9):
+    dependencies:
+      fp-ts: 2.16.9
 
   kareem@2.6.3: {}
 

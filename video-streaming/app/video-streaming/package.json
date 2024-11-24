@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "fp-ts": "^2.16.9",
+    "io-ts": "^2.2.21",
     "mongoose": "^8.8.2"
   }
 }
