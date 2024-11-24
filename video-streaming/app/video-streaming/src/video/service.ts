@@ -1,11 +1,13 @@
 import * as E from 'fp-ts/Either';
 import { pipe } from 'fp-ts/function';
 import * as TE from 'fp-ts/TaskEither';
-import { ServerResponse } from 'http';
 import { createReadStream, statSync } from 'node:fs';
+import { ServerResponse } from 'node:http';
 import { join } from 'node:path';
+import { Readable } from 'node:stream';
 import { sendResponse } from '../response';
 import { debugAction } from '../utils/debug-utils';
+import { VideoStorageAdapter } from './adapter';
 import { createVideoRepository } from './repository';
 
 // === 데이터 정의 ===
@@ -53,11 +55,8 @@ const streamVideoFile = (
 
 export const handleVideoStreamRequest = async (
   res: ServerResponse,
-  fileName: string
+  path: string
 ): Promise<void> => {
-  const path = getVideoPath(fileName);
-  debugAction(() => console.info(`Video path: ${path}`));
-
   await pipe(
     fetchFileStats(path), // 파일 통계 액션
     E.map((stat) => {
@@ -83,7 +82,8 @@ export const handleVideoStreamRequest = async (
 };
 
 export const createVideoService = (
-  repository: ReturnType<typeof createVideoRepository>
+  repository: ReturnType<typeof createVideoRepository>,
+  storageAdapter: VideoStorageAdapter
 ) => {
   return {
     // 비즈니스 로직: 비디오 생성
@@ -122,6 +122,18 @@ export const createVideoService = (
         throw new Error('Video not found');
       }
       return video;
+    },
+
+    streamVideo: async (path: string): Promise<Readable> => {
+      const bucket = process.env.BUCKET_NAME || 'video';
+      // const exists = await storageAdapter.exists(bucket, path);
+      // if (!exists) {
+      //   throw new Error('Video not found');
+      // }
+
+      const stream = await storageAdapter.getStream(bucket, path);
+      debugAction(() => console.info('Video stream created'));
+      return stream;
     },
   };
 };

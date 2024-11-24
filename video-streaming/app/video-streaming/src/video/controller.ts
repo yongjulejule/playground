@@ -1,5 +1,6 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import * as t from 'io-ts';
+import { debugAction } from '../utils';
 import { parseJsonBody } from '../utils/parse-body';
 import { VideoService } from './service';
 
@@ -44,33 +45,73 @@ export const createVideoController = (service: VideoService) => ({
       req.url || '',
       `http://${req.headers.host}`
     ).searchParams.get('id');
+
+    let isResponseSent = false;
+
     if (!videoId) {
-      res.writeHead(400, { 'Content-Type': 'text/plain' });
-      res.end('Missing video ID');
+      if (!isResponseSent) {
+        res.writeHead(400, { 'Content-Type': 'text/plain' });
+        res.end('Missing video ID');
+        isResponseSent = true;
+      }
       return;
     }
 
     try {
       const video = await service.getVideoById(videoId);
-      if (!video) {
-        res.writeHead(404, { 'Content-Type': 'text/plain' });
-        res.end('Video not found');
-        return;
-      }
-      // TODO: Implement streaming logic
+      debugAction(() => console.log('found video', video));
 
+      const stream = await service.streamVideo(video.path);
+
+      // 헤더 전송
       res.writeHead(200, {
         'Content-Type': 'video/mp4',
         'Content-Length': video.size,
       });
 
-      // Here you can implement streaming logic
-      res.end('Stream started (mock)');
+      // 스트림 데이터를 클라이언트로 전송
+      stream.pipe(res);
+
+      stream.on('data', (chunk) => {
+        debugAction(() =>
+          console.info(`Streaming chunk: ${chunk.length} bytes`)
+        );
+      });
+
+      // 스트림 종료 처리
+      stream.on('end', () => {
+        if (!isResponseSent) {
+          isResponseSent = true;
+          res.end();
+          console.info('Streaming completed successfully');
+        }
+      });
+
+      // 스트림 에러 처리
+      stream.on('error', (err) => {
+        console.error(`Stream error: ${err.message}`);
+        if (!isResponseSent) {
+          isResponseSent = true;
+          res.writeHead(500, { 'Content-Type': 'text/plain' });
+          res.end('Internal Server Error');
+        }
+      });
+
+      // 클라이언트가 연결을 끊었을 때 처리
+      res.on('close', () => {
+        if (!isResponseSent) {
+          isResponseSent = true;
+          console.warn('Client closed the connection');
+        }
+      });
     } catch (err) {
-      res.writeHead(500, { 'Content-Type': 'text/plain' });
-      const message =
-        err instanceof Error ? err.message : 'Internal Server Error';
-      res.end(`Error: ${message}`);
+      if (!isResponseSent) {
+        console.error(`Error in streaming video: ${err}`);
+        res.writeHead(500, { 'Content-Type': 'text/plain' });
+        const message =
+          err instanceof Error ? err.message : 'Internal Server Error';
+        res.end(`Error: ${message}`);
+      }
     }
   },
 });

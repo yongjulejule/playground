@@ -5,6 +5,7 @@ import { createMongoConnection } from './db/connect';
 import { createRouter } from './router';
 import { debugAction, isDebugEnabled } from './utils/debug-utils';
 import { parsePort } from './utils/parse-port';
+import { createMinIOAdapter } from './video/adapter';
 import { createVideoController } from './video/controller';
 import { createVideoRepository } from './video/repository';
 import { createVideoService } from './video/service';
@@ -23,7 +24,13 @@ const main = () => {
       TE.tryCatch(
         async () => {
           const repository = createVideoRepository(connection);
-          const service = createVideoService(repository);
+          const adapter = createMinIOAdapter(
+            // TODO: Validation
+            process.env.MINIO_ENDPOINT ?? 'http://localhost:9000',
+            process.env.MINIO_ACCESS_KEY!,
+            process.env.MINIO_SECRET_KE!
+          );
+          const service = createVideoService(repository, adapter);
           const controller = createVideoController(service);
           const router = createRouter(controller);
           const server = createServer(router);

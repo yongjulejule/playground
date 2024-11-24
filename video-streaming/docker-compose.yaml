@@ -7,16 +7,19 @@ services:
     build:
       context: ./app/video-streaming
       dockerfile: Dockerfile
+      target: development
     ports:
       - '8080:8080'
     volumes:
       - ./app/video-streaming:/app/video-streaming
     init: true
+    restart: always
     environment:
       - DEBUG=true
       - PORT=${PORT:-8080}
       - NODE_ENV=${NODE_ENV:-local}
       - MONGO_URI=mongodb://mongo:password@mongo:27017/video?authSource=admin
+      - MINIO_ENDPOINT=http://video-storage:9000
 
   mongo:
     container_name: video-mongo
