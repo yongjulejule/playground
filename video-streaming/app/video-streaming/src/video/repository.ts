@@ -3,7 +3,7 @@ import { IVideo, VideoModel } from '../db/model/video';
 
 export const createVideoRepository = (connection: Connection) => {
   const videoModel: Model<IVideo> = connection.model(
-    'Video',
+    'video',
     VideoModel.schema
   );
 

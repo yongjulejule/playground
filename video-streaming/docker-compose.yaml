@@ -1,5 +1,8 @@
 services:
   video-streaming:
+    depends_on:
+      - mongo
+      - video-storage
     container_name: video-streaming
     build:
       context: ./app/video-streaming
@@ -13,7 +16,7 @@ services:
       - DEBUG=true
       - PORT=${PORT:-8080}
       - NODE_ENV=${NODE_ENV:-local}
-      - MONGO_URI=mongodb://root:example@mongo:27017/admin
+      - MONGO_URI=mongodb://mongo:password@mongo:27017/video?authSource=admin
 
   mongo:
     container_name: video-mongo
@@ -22,6 +25,7 @@ services:
       - '27017:27017'
     volumes:
       - ./data/mongo:/data/db
+      - ./scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example

@@ -8,7 +8,7 @@ export const createMongoConnection = (
     async (): Promise<Connection> => {
       const connection = await mongoose
         .createConnection(uri, {
-          dbName: 'video-streaming',
+          dbName: 'video',
           maxPoolSize: 10,
         })
         .asPromise();
