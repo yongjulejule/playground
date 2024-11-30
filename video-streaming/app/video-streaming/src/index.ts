@@ -1,87 +1,76 @@
 import * as TE from 'fp-ts/TaskEither';
 import { pipe } from 'fp-ts/lib/function';
 import { createServer } from 'node:http';
-import { createMongoConnection } from './db/connect';
-import { createRabbitMQConnection } from './mq/connect';
+import { AppContext, createContext } from './app-context';
+import { createRabbitMqAdapter } from './mq/adapter';
 import { createRouter } from './router';
-import { createMinIOAdapter } from './storage-adapter';
 import { debugAction, isDebugEnabled } from './utils/debug-utils';
-import { parsePort } from './utils/parse-port';
+import { parseEnv } from './utils/parse-env';
 import { createVideoController } from './video/controller';
 import { createVideoRepository } from './video/repository';
 import { createVideoService } from './video/service';
 
-// HTTP 서버 시작
+// HTTP 서버 실행 함수
+const startHttpServer = (context: AppContext): TE.TaskEither<Error, void> => {
+  return TE.tryCatch(
+    async () => {
+      const {
+        env,
+        mongoConnection,
+        rabbitMQConnection,
+        minioAdapter,
+        rabbitMQChannel,
+      } = context;
+
+      const repository = createVideoRepository(mongoConnection);
+      const minIoAdapter = minioAdapter;
+      const rabbitMqAdapter = createRabbitMqAdapter(rabbitMQChannel);
+      const service = createVideoService(
+        repository,
+        minIoAdapter,
+        rabbitMqAdapter
+      );
+      const controller = createVideoController(service);
+      const router = createRouter(controller);
+      const server = createServer(router);
+
+      server.listen(env.port, () => {
+        console.log(`Server is running on http://localhost:${env.port}`);
+      });
+
+      // Graceful Shutdown 처리
+      process.on('SIGINT', async () => {
+        console.log('Shutting down...');
+        await mongoConnection.close();
+        await rabbitMQConnection.close();
+        console.log('Connections closed. Goodbye!');
+        process.exit(0);
+      });
+    },
+    (reason) => new Error(`Failed to start HTTP server: ${String(reason)}`)
+  );
+};
+
+// Main 함수
 const main = () => {
   debugAction(() => console.info(`Debug mode: ${isDebugEnabled()}`));
-  const mongoUri = process.env.MONGO_URI ?? 'mongodb://mongo:27017'; // TODO: parsePort 와 통합
-  const rabbitMQUri = process.env.RABBITMQ_URI ?? 'amqp://rabbit:5672'; // TODO: parsePort 와 통합
-  debugAction(() => {
-    console.debug(`MongoDB URI: ${mongoUri}`);
-    console.debug(`RabbitMQ URI: ${rabbitMQUri}`);
-  });
-  const port = process.env.PORT;
 
   pipe(
-    TE.fromEither(parsePort()),
-    TE.chain(() => createRabbitMQConnection(rabbitMQUri)),
-    TE.chain(() => createMongoConnection(mongoUri)), // MongoDB 연결
-    TE.chain((connection) =>
-      TE.tryCatch(
-        async () => {
-          const repository = createVideoRepository(connection);
-          const adapter = createMinIOAdapter(
-            // TODO: Validation
-            process.env.MINIO_ENDPOINT ?? 'http://localhost:9000',
-            process.env.MINIO_ACCESS_KEY!,
-            process.env.MINIO_SECRET_KE!
-          );
-          const service = createVideoService(repository, adapter);
-          const controller = createVideoController(service);
-          const router = createRouter(controller);
-          const server = createServer(router);
-
-          server.listen(port, () => {
-            console.log(`Server is running on http://localhost:${port}`);
-          });
-
-          // Graceful Shutdown 처리
-          process.on('SIGINT', () => {
-            console.log('Shutting down...');
-            pipe(
-              TE.tryCatch(
-                async () => {
-                  await connection.close();
-                },
-                (reason) =>
-                  new Error(
-                    `Failed to close MongoDB connection: ${String(reason)}`
-                  )
-              ),
-              TE.match(
-                (error) => {
-                  console.error(error.message);
-                  process.exit(1);
-                },
-                () => {
-                  console.log('MongoDB connection closed. Goodbye!');
-                  process.exit(0);
-                }
-              )
-            )();
-          });
-
-          return connection;
-        },
-        (reason) => new Error(`Failed to initialize server: ${String(reason)}`)
+    TE.fromEither(parseEnv()), // 환경 변수 검증
+    TE.chain((env) =>
+      pipe(
+        createContext(env), // AppContext 생성
+        TE.chain(startHttpServer) // HTTP 서버 실행
       )
     ),
     TE.match(
       (error) => {
-        console.error(`Failed to initialize server: ${error.message}`);
-        process.exit(1);
+        console.error(`Failed to initialize application: ${error.message}`);
+        process.exit(1); // 초기화 실패 시 종료
       },
-      () => console.log('Server initialized successfully')
+      () => {
+        console.log('Application initialized successfully');
+      }
     )
   )();
 };

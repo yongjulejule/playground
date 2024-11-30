@@ -21,6 +21,8 @@ services:
       - NODE_ENV=${NODE_ENV:-local}
       - MONGO_URI=mongodb://mongo:password@mongo:27017/video?authSource=admin
       - MINIO_ENDPOINT=http://video-storage:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
 
   mongo:
     container_name: video-mongo

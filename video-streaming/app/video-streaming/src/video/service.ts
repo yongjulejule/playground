@@ -5,6 +5,7 @@ import { createReadStream, statSync } from 'node:fs';
 import { ServerResponse } from 'node:http';
 import { join } from 'node:path';
 import { Readable } from 'node:stream';
+import { RabbitMqAdapter } from '../mq/adapter';
 import { sendResponse } from '../response';
 import { VideoStorageAdapter } from '../storage-adapter';
 import { debugAction } from '../utils/debug-utils';
@@ -83,7 +84,8 @@ export const handleVideoStreamRequest = async (
 
 export const createVideoService = (
   repository: ReturnType<typeof createVideoRepository>,
-  storageAdapter: VideoStorageAdapter
+  storageAdapter: VideoStorageAdapter,
+  rabbitMqAdapter: RabbitMqAdapter
 ) => {
   return {
     // 비즈니스 로직: 비디오 생성
@@ -126,14 +128,28 @@ export const createVideoService = (
 
     streamVideo: async (path: string): Promise<Readable> => {
       const bucket = process.env.BUCKET_NAME || 'video';
-      // const exists = await storageAdapter.exists(bucket, path);
-      // if (!exists) {
-      //   throw new Error('Video not found');
-      // }
+      const exists = await storageAdapter.exists(bucket, path);
+      if (!exists) {
+        throw new Error('Video not found');
+      }
 
       const stream = await storageAdapter.getStream(bucket, path);
       debugAction(() => console.info('Video stream created'));
       return stream;
+    },
+
+    viewVideo: async (videoId: string) => {
+      const video = await repository.findById(videoId);
+      if (!video) {
+        throw new Error('Video not found');
+      }
+
+      const exchange = await rabbitMqAdapter.exchange('video-view', 'fanout');
+      const routingKey = 'viewed';
+      const message = JSON.stringify({ videoId });
+
+      await rabbitMqAdapter.publish(exchange, routingKey, message);
+      debugAction(() => console.info('Video view event published'));
     },
   };
 };

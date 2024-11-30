@@ -1,6 +1,6 @@
 import * as E from 'fp-ts/Either';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { parsePort } from '../parse-port';
+import { parsePort } from '../parse-env';
 
 describe('parsePort', () => {
   let originalPort: string | undefined;
