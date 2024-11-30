@@ -2,10 +2,11 @@ import * as TE from 'fp-ts/TaskEither';
 import { pipe } from 'fp-ts/lib/function';
 import { createServer } from 'node:http';
 import { createMongoConnection } from './db/connect';
+import { createRabbitMQConnection } from './mq/connect';
 import { createRouter } from './router';
+import { createMinIOAdapter } from './storage-adapter';
 import { debugAction, isDebugEnabled } from './utils/debug-utils';
 import { parsePort } from './utils/parse-port';
-import { createMinIOAdapter } from './video/adapter';
 import { createVideoController } from './video/controller';
 import { createVideoRepository } from './video/repository';
 import { createVideoService } from './video/service';
@@ -13,12 +14,17 @@ import { createVideoService } from './video/service';
 // HTTP 서버 시작
 const main = () => {
   debugAction(() => console.info(`Debug mode: ${isDebugEnabled()}`));
-  const mongoUri = process.env.MONGO_URI ?? 'mongodb://localhost:27017'; // TODO: parsePort 와 통합
-  console.log(`MongoDB URI: ${mongoUri}`);
+  const mongoUri = process.env.MONGO_URI ?? 'mongodb://mongo:27017'; // TODO: parsePort 와 통합
+  const rabbitMQUri = process.env.RABBITMQ_URI ?? 'amqp://rabbit:5672'; // TODO: parsePort 와 통합
+  debugAction(() => {
+    console.debug(`MongoDB URI: ${mongoUri}`);
+    console.debug(`RabbitMQ URI: ${rabbitMQUri}`);
+  });
   const port = process.env.PORT;
 
   pipe(
     TE.fromEither(parsePort()),
+    TE.chain(() => createRabbitMQConnection(rabbitMQUri)),
     TE.chain(() => createMongoConnection(mongoUri)), // MongoDB 연결
     TE.chain((connection) =>
       TE.tryCatch(

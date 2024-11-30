@@ -1,7 +1,7 @@
 import { Readable } from 'stream';
 import { URL } from 'url';
-import { debugAction } from '../utils';
-import { toReadable } from '../utils/to-readable';
+import { debugAction } from './utils';
+import { toReadable } from './utils/to-readable';
 
 export const createMinIOAdapter = (
   baseURL: string,

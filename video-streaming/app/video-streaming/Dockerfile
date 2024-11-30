@@ -34,19 +34,14 @@ ENTRYPOINT [ "node" ]
 
 CMD [ "dist/index.js" ]
 
-FROM node:22-alpine AS development
+FROM base AS local
 
-ENV NODE_ENV=development
+ENV NODE_ENV=local
 
 WORKDIR /usr/src/app
 
-COPY . .
 COPY --from=dependencies /usr/src/app /usr/src/app
-
-ENV PNPM_HOME='/pnpm'
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
 
 RUN pnpm add -g tsx
 
-ENTRYPOINT [ "tsx", "src/index.ts"]
+ENTRYPOINT [ "tsx", "watch", "src/index.ts" ]

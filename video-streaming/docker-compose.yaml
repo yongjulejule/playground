@@ -3,15 +3,16 @@ services:
     depends_on:
       - mongo
       - video-storage
+      - rabbit
     container_name: video-streaming
     build:
       context: ./app/video-streaming
       dockerfile: Dockerfile
-      target: development
+      target: local
     ports:
       - '8080:8080'
     volumes:
-      - ./app/video-streaming:/app/video-streaming
+      - ./app/video-streaming:/usr/src/app/
     init: true
     restart: always
     environment:
@@ -45,3 +46,11 @@ services:
     volumes:
       - ./data/min-io:/data # 데이터 persistence를 위한 볼륨
     command: server /data --console-address ":9001"
+
+  rabbit:
+    image: rabbitmq:4-management
+    container_name: video-mq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    restart: always

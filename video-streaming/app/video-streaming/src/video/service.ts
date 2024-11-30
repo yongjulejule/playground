@@ -6,8 +6,8 @@ import { ServerResponse } from 'node:http';
 import { join } from 'node:path';
 import { Readable } from 'node:stream';
 import { sendResponse } from '../response';
+import { VideoStorageAdapter } from '../storage-adapter';
 import { debugAction } from '../utils/debug-utils';
-import { VideoStorageAdapter } from './adapter';
 import { createVideoRepository } from './repository';
 
 // === 데이터 정의 ===
