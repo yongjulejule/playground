@@ -54,3 +54,5 @@ export const closeRabbitMQConnection = (): TE.TaskEither<Error, void> =>
     (reason) =>
       new Error(`Failed to close RabbitMQ connection: ${String(reason)}`)
   );
+
+export const VIDEO_VIEW_EXCHANGE_KEY = 'video-viewed3' as const;

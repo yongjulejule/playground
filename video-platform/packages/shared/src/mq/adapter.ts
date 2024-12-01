@@ -40,7 +40,6 @@ export const createRabbitMqAdapter = (channel: Channel) => {
     ) => {
       try {
         console.info('Subscribing to messages...');
-        await channel.assertExchange(exchange, 'direct', { durable: true });
         await channel.assertQueue(queue, { durable: true });
         await channel.bindQueue(queue, exchange, routingKey);
 

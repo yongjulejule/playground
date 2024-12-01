@@ -18,7 +18,7 @@ FROM base AS dependencies
 
 # Copy workspace metadata for dependency installation
 COPY nx.json pnpm-workspace.yaml package.json pnpm-lock.yaml ./
-COPY apps/video-streaming/package.json ./apps/video-streaming/
+COPY apps/history/package.json ./apps/history/
 COPY packages/shared/package.json ./packages/shared/
 
 # Install dependencies with pnpm
@@ -31,7 +31,7 @@ FROM dependencies AS local
 RUN pnpm add -g tsx
 
 # Use hot-reloading
-WORKDIR /usr/src/app/apps/video-streaming
+WORKDIR /usr/src/app/apps/history
 ENTRYPOINT ["tsx", "watch", "src/index.ts"]
 
 # Stage 4: Production build
@@ -39,7 +39,7 @@ FROM dependencies AS build
 
 # Copy the entire workspace and build
 COPY . .
-RUN pnpm nx build video-streaming --skip-nx-cache
+RUN pnpm nx build history --skip-nx-cache
 
 # Stage 5: Production-ready image
 FROM node:22-alpine AS prod
@@ -47,7 +47,7 @@ FROM node:22-alpine AS prod
 WORKDIR /usr/src/app
 
 # Copy built application
-COPY --from=build /usr/src/app/dist/apps/video-streaming ./dist
+COPY --from=build /usr/src/app/dist/apps/history ./dist
 
 # Set environment variables
 ENV NODE_ENV=production

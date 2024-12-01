@@ -23,11 +23,37 @@ services:
     environment:
       - DEBUG=true
       - PORT=${PORT:-8080}
-      - NODE_ENV=${NODE_ENV:-local}
+      - NODE_ENV=${NODE_ENV:-development}
       - MONGO_URI=mongodb://mongo:password@mongo:27017/video?authSource=admin
       - MINIO_ENDPOINT=http://video-storage:9000
       - MINIO_ACCESS_KEY=minioadmin
       - MINIO_SECRET_KEY=minioadmin
+
+  history:
+    depends_on:
+      - mongo
+      - rabbit
+    container_name: video-history
+    build:
+      context: .
+      dockerfile: ./apps/history/Dockerfile
+      target: local
+    ports:
+      - '8081:8081'
+    volumes:
+      - ./apps/history:/usr/src/app/apps/history
+      - ./packages/shared:/usr/src/app/packages/shared
+      - ./nx.json:/usr/src/app/nx.json
+      - ./package.json:/usr/src/app/package.json
+      - ./pnpm-lock.yaml:/usr/src/app/pnpm-lock.yaml
+      - ./pnpm-workspace.yaml:/usr/src/app/pnpm-workspace.yaml
+    init: true
+    restart: always
+    environment:
+      - DEBUG=true
+      - PORT=${PORT:-8081}
+      - NODE_ENV=${NODE_ENV:-development}
+      - MONGO_URI=mongodb://mongo:password@mongo:27017/history?authSource=admin
 
   mongo:
     container_name: video-mongo

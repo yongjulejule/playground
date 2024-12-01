@@ -57,6 +57,7 @@ export const createVideoController = (service: VideoService) => ({
     }
 
     try {
+      await service.viewVideo(videoId);
       const video = await service.getVideoById(videoId);
       debugAction(() => console.log('found video', video));
 

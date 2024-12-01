@@ -5,8 +5,7 @@ export * from './db/connect';
 export * from './db/model';
 
 // Message Queue
-export * from './mq/adapter';
-export * from './mq/connect';
+export * from './mq';
 
 // Storage
 export * from './storage/storage-adapter';

@@ -1,6 +1,7 @@
 import {
   debugAction,
   RabbitMqAdapter,
+  VIDEO_VIEW_EXCHANGE_KEY,
   VideoStorageAdapter,
 } from '@video-platform/shared';
 import * as E from 'fp-ts/Either';
@@ -12,6 +13,7 @@ import { join } from 'node:path';
 import { Readable } from 'node:stream';
 import { sendResponse } from '../response';
 import { createVideoRepository } from './repository';
+console.log(VIDEO_VIEW_EXCHANGE_KEY, 'asdasdasd');
 
 // === 데이터 정의 ===
 // 비디오 파일 경로를 데이터로 관리
@@ -146,7 +148,10 @@ export const createVideoService = (
         throw new Error('Video not found');
       }
 
-      const exchange = await rabbitMqAdapter.exchange('video-view', 'fanout');
+      const exchange = await rabbitMqAdapter.exchange(
+        VIDEO_VIEW_EXCHANGE_KEY,
+        'fanout'
+      );
       const routingKey = 'viewed';
       const message = JSON.stringify({ videoId });
 

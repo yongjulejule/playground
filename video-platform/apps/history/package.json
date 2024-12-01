@@ -1,0 +1,21 @@
+{
+  "name": "@video-platform/history",
+  "version": "0.0.1",
+  "scripts": {
+    "test": "pnpm exec vitest",
+    "test:watch": "pnpm exec vitest --watch=true",
+    "start": "pnpm exec tsx src/index.ts",
+    "start:dev": "DEBUG=true PORT=3000 pnpm exec tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "@video-platform/shared": "workspace:*",
+    "amqplib": "^0.10.5",
+    "fp-ts": "^2.16.9",
+    "io-ts": "^2.2.21",
+    "mongoose": "^8.8.3"
+  },
+  "devDependencies": {
+    "@types/amqplib": "^0.10.5",
+    "tsx": "^4.19.2"
+  }
+}
