@@ -1,0 +1,23 @@
+{
+  "name": "@video-platform/shared",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.lib.json"
+  },
+  "dependencies": {
+    "amqplib": "^0.10.5",
+    "fp-ts": "^2.16.9",
+    "io-ts": "^2.2.21",
+    "mongoose": "^8.8.3"
+  },
+  "devDependencies": {
+    "@types/amqplib": "^0.10.5",
+    "@types/node": "22.10.1"
+  },
+  "engines": {
+    "node": ">=22.9.0"
+  }
+}

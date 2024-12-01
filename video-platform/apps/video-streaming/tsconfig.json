@@ -1,0 +1,16 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "../../",
+    "baseUrl": "./",
+    "paths": {
+      "@video-platform/shared": ["../../packages/shared/src"] // Map shared package
+    }
+  },
+  "include": [
+    "src/**/*",
+    "../../packages/shared/src/**/*" // Include the shared package explicitly
+  ],
+  "exclude": ["node_modules", "dist"]
+}

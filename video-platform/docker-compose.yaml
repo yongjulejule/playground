@@ -1,0 +1,71 @@
+services:
+  video-streaming:
+    depends_on:
+      - mongo
+      - video-storage
+      - rabbit
+    container_name: video-streaming
+    build:
+      context: .
+      dockerfile: ./apps/video-streaming/Dockerfile
+      target: local
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./apps/video-streaming:/usr/src/app/apps/video-streaming
+      - ./packages/shared:/usr/src/app/packages/shared
+      - ./nx.json:/usr/src/app/nx.json
+      - ./package.json:/usr/src/app/package.json
+      - ./pnpm-lock.yaml:/usr/src/app/pnpm-lock.yaml
+      - ./pnpm-workspace.yaml:/usr/src/app/pnpm-workspace.yaml
+    init: true
+    restart: always
+    environment:
+      - DEBUG=true
+      - PORT=${PORT:-8080}
+      - NODE_ENV=${NODE_ENV:-local}
+      - MONGO_URI=mongodb://mongo:password@mongo:27017/video?authSource=admin
+      - MINIO_ENDPOINT=http://video-storage:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+
+  mongo:
+    container_name: video-mongo
+    image: mongo:latest
+    ports:
+      - '27017:27017'
+    volumes:
+      - ./data/mongo:/data/db
+      - ./scripts/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    restart: always
+
+  video-storage:
+    image: quay.io/minio/minio
+    container_name: video-storage
+    ports:
+      - '9000:9000' # MinIO API 포트
+      - '9001:9001' # MinIO 콘솔 포트
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - ./data/min-io:/data # Persistent data volume
+    command: server /data --console-address ":9001"
+    restart: always
+
+  rabbit:
+    container_name: video-mq
+    image: rabbitmq:management
+    ports:
+      - '5672:5672'
+      - '15672:15672' # Management console
+    restart: always
+
+volumes:
+  mongo-data:
+    driver: local
+  minio-data:
+    driver: local
