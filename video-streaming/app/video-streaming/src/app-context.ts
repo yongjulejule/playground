@@ -7,7 +7,10 @@ import * as TE from 'fp-ts/TaskEither';
 import { Connection as MongoConnection } from 'mongoose';
 import { createMongoConnection } from './db/connect';
 import { createRabbitMQConnection } from './mq/connect';
-import { createMinIOAdapter, MinIOAdapter } from './storage-adapter';
+import {
+  createMinIOAdapter,
+  MinIOAdapter,
+} from './object-storage/storage-adapter';
 import { EnvConfig } from './utils/parse-env';
 
 export interface AppContext {

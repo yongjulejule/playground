@@ -6,8 +6,8 @@ import { ServerResponse } from 'node:http';
 import { join } from 'node:path';
 import { Readable } from 'node:stream';
 import { RabbitMqAdapter } from '../mq/adapter';
+import { VideoStorageAdapter } from '../object-storage/storage-adapter';
 import { sendResponse } from '../response';
-import { VideoStorageAdapter } from '../storage-adapter';
 import { debugAction } from '../utils/debug-utils';
 import { createVideoRepository } from './repository';
 
