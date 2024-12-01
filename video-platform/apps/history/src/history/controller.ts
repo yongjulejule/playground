@@ -1,7 +1,7 @@
 import { IncomingMessage, ServerResponse } from 'http';
-import { VideoHistory } from './service';
+import { HistoryService } from './service';
 
-export const createHistoryController = (service: VideoHistory) => ({
+export const createHistoryController = (service: HistoryService) => ({
   findMany: async (req: IncomingMessage, res: ServerResponse) => {
     try {
       const videos = await service.findMany();

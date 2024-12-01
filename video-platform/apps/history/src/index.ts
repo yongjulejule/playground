@@ -14,6 +14,7 @@ import { createHistoryRepository } from './history/repository';
 import { createHistoryService } from './history/service';
 import { parseEnv } from './parse-env';
 import { createRouter } from './router';
+import { createVideoViewedSubscriber } from './subscribers/video-viewed-subscriber';
 
 // HTTP 서버 실행 함수
 const startHttpServer = (context: AppContext): TE.TaskEither<Error, void> => {
@@ -25,6 +26,7 @@ const startHttpServer = (context: AppContext): TE.TaskEither<Error, void> => {
       const repository = createHistoryRepository(mongoConnection);
       const rabbitMqAdapter = createRabbitMqAdapter(rabbitMQChannel);
       const service = createHistoryService(repository, rabbitMqAdapter);
+      createVideoViewedSubscriber(rabbitMqAdapter, service)();
       const controller = createHistoryController(service);
       const router = createRouter(controller);
       const server = createServer(router);
