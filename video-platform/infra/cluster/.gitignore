@@ -1,4 +1,4 @@
-cloud-init.yaml
+.kube
 # Local .terraform directories
 **/.terraform/*
 
