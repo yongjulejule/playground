@@ -2,10 +2,5 @@
 
 ## Requirements
 
-# Vagrant 설치
-
-brew install vagrant
-
-# VMware Fusion Vagrant 플러그인 설치
-
-vagrant plugin install vagrant-vmware-desktop
+- lima
+  - socket_vmnet (brew 로 깔면 안됨. https://lima-vm.io/docs/config/network/#socket_vmnet)

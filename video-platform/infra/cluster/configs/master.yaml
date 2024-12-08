@@ -1,16 +1,21 @@
-arch: "aarch64"
+arch: 'aarch64'
 images:
-  - location: "https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-arm64.img"
-    arch: "aarch64"
+  - location: 'https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-arm64.img'
+    arch: 'aarch64'
 
 cpus: 4
 memory: 8GiB
 disk: 40GiB
 
+networks:
+  - lima: shared # 기본 slirp 네트워크 사용
+  - lima: user
+    macAddress: '02:00:00:00:00:01' # master용
+
 portForwards:
-  - guestIP: "0.0.0.0"
+  - guestIP: '0.0.0.0'
     guestPort: 6443
-    hostIP: "127.0.0.1"
+    hostIP: '127.0.0.1'
     hostPort: 6443
 
 containerd:

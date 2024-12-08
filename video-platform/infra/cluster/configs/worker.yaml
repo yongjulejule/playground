@@ -1,11 +1,16 @@
-arch: "aarch64"
+arch: 'aarch64'
 images:
-  - location: "https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-arm64.img"
-    arch: "aarch64"
+  - location: 'https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-arm64.img'
+    arch: 'aarch64'
 
 cpus: 2
 memory: 4GiB
 disk: 20GiB
+
+networks:
+  - lima: shared
+  - lima: user
+    macAddress: '02:00:00:00:00:02' # worker용
 
 containerd:
   system: true

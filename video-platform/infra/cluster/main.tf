@@ -1,13 +1,57 @@
 provider "null" {}
 
 # Lima 설정 파일 복사
+# Lima 마스터 노드 설정
 resource "local_file" "master_config" {
-  source   = "${path.module}/configs/master.yaml"
+  content  = <<EOT
+arch: "aarch64"
+images:
+- location: "https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-arm64.img"
+  arch: "aarch64"
+
+cpus: 4
+memory: 8GiB
+disk: 40GiB
+
+networks:
+  - lima: shared
+    macAddress: "02:00:00:00:00:01"
+
+
+portForwards:
+  - guestIP: "0.0.0.0"
+    guestPort: 6443
+    hostIP: "127.0.0.1"
+    hostPort: 6443
+
+containerd:
+  system: true
+  user: true
+EOT
   filename = "${path.module}/generated/master.yaml"
 }
 
+# Lima 워커 노드 설정
 resource "local_file" "worker_config" {
-  source   = "${path.module}/configs/worker.yaml"
+  content  = <<EOT
+arch: "aarch64"
+images:
+- location: "https://cloud-images.ubuntu.com/releases/22.04/release/ubuntu-22.04-server-cloudimg-arm64.img"
+  arch: "aarch64"
+
+cpus: 2
+memory: 4GiB
+disk: 20GiB
+
+networks:
+- lima: shared
+  macAddress: "02:00:00:00:00:02" # Master 노드
+
+
+containerd:
+  system: true
+  user: true
+EOT
   filename = "${path.module}/generated/worker.yaml"
 }
 
@@ -97,18 +141,12 @@ resource "null_resource" "setup_worker" {
     command = <<EOT
       # 기본 설정
       limactl shell k8s-worker sudo bash -c 'chmod +x /tmp/setup-worker.sh && /tmp/setup-worker.sh'
-      
+      sleep 10
       # Join 실행
       limactl shell k8s-worker sudo bash -c '${data.external.join_command.result["output"]}'
-      
-      # kubelet 설정 및 시작
-      limactl shell k8s-worker sudo bash -c '
-        cat <<EOF > /etc/default/kubelet
-KUBELET_EXTRA_ARGS=--node-ip=$(hostname -I | awk "{print \$1}")
-EOF
-        systemctl daemon-reload
-        systemctl restart kubelet
-      '
+      sleep 10
+      # kubelet 재시작
+      limactl shell k8s-worker sudo systemctl restart kubelet
     EOT
   }
 }

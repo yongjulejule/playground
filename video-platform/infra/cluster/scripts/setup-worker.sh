@@ -33,5 +33,19 @@ apt-get update
 apt-get install -y kubelet kubeadm
 apt-mark hold kubelet kubeadm
 
-# 일단 kubelet 중지
-systemctl stop kubelet
+# 기본 kubelet 설정
+mkdir -p /var/lib/kubelet/
+cat >/var/lib/kubelet/config.yaml <<EOF
+apiVersion: kubelet.config.k8s.io/v1beta1
+kind: KubeletConfiguration
+cgroupDriver: systemd
+EOF
+
+# kubelet 설정
+cat >/etc/default/kubelet <<EOF
+KUBELET_EXTRA_ARGS=--node-ip=$(hostname -I | awk '{print $1}') --config=/var/lib/kubelet/config.yaml
+EOF
+
+# kubelet 시작 전 설정 적용
+systemctl daemon-reload
+systemctl enable kubelet
