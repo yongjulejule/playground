@@ -2,6 +2,10 @@ cloud-init.yaml
 # Local .terraform directories
 **/.terraform/*
 
+id_rsa
+id_rsa.pub
+kubeconfig
+
 # .tfstate files
 *.tfstate
 *.tfstate.*

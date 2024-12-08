@@ -3,5 +3,4 @@
 ## Requirements
 
 - terraform
-- multipass(https://multipass.run/docs/install-multipass)
-- ssh-keygen 필요
+- vagrant
