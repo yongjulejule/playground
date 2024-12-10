@@ -31,16 +31,18 @@ apt-get update
 apt-get install -y kubelet kubeadm kubectl
 apt-mark hold kubelet kubeadm kubectl
 
+NODE_IP=$(ip addr show lima0 | grep "inet " | awk '{print $2}' | cut -d '/' -f1 )
+
 # kubelet 설정
 cat <<EOF > /etc/default/kubelet
-KUBELET_EXTRA_ARGS=--node-ip=$(hostname -I | awk '{print $1}')
+KUBELET_EXTRA_ARGS=--node-ip=$NODE_IP
 EOF
 systemctl daemon-reload
 systemctl restart kubelet
 
 # kubeadm 초기화
 kubeadm init --pod-network-cidr=192.168.0.0/16 \
-  --apiserver-advertise-address=$(hostname -I | awk '{print $1}') \
+  --apiserver-advertise-address=$NODE_IP \
   --apiserver-cert-extra-sans=127.0.0.1 \
   --apiserver-cert-extra-sans=localhost
 

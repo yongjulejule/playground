@@ -41,9 +41,10 @@ kind: KubeletConfiguration
 cgroupDriver: systemd
 EOF
 
+NODE_IP=$(ip addr show lima0 | grep "inet " | awk '{print $2}' | cut -d '/' -f1 )
 # kubelet 설정
 cat >/etc/default/kubelet <<EOF
-KUBELET_EXTRA_ARGS=--node-ip=$(hostname -I | awk '{print $1}') --config=/var/lib/kubelet/config.yaml
+KUBELET_EXTRA_ARGS=--node-ip=$NODE_IP --config=/var/lib/kubelet/config.yaml
 EOF
 
 # kubelet 시작 전 설정 적용

@@ -1,4 +1,5 @@
 .kube
+generated
 # Local .terraform directories
 **/.terraform/*
 

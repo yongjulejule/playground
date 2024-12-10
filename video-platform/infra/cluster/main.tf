@@ -86,7 +86,11 @@ resource "null_resource" "create_worker" {
 # Master 노드 IP 가져오기
 data "external" "master_ip" {
   depends_on = [null_resource.create_master]
-  program    = ["bash", "-c", "echo '{\"output\": \"'$(limactl shell k8s-master hostname -I | awk '{print $1}')'\"}'"]
+
+  program = ["bash", "-c", <<EOT
+limactl shell k8s-master ip addr show lima0 | grep "inet " | awk '{print $2}' | cut -d'/' -f1 | jq -R -c '{ "output": . }'
+EOT
+  ]
 }
 
 # Master 노드 설정
@@ -121,13 +125,17 @@ resource "null_resource" "get_kubeconfig" {
 # Join 커맨드 가져오기
 data "external" "join_command" {
   depends_on = [null_resource.setup_master]
-  program    = ["bash", "-c", "echo '{\"output\": \"'$(limactl shell k8s-master cat /root/join-command.sh)'\"}'"]
+  program    = ["bash", "-c", "echo '{\"output\": \"'$(limactl shell k8s-master sudo cat /root/join-command.sh)'\"}'"]
 }
 
 # Worker 노드 IP 가져오기
 data "external" "worker_ip" {
   depends_on = [null_resource.create_worker]
-  program    = ["bash", "-c", "echo '{\"output\": \"'$(limactl shell k8s-worker hostname -I | awk '{print $1}')'\"}'"]
+
+  program = ["bash", "-c", <<EOT
+limactl shell k8s-worker ip addr show lima0 | grep "inet " | awk '{print $2}' | cut -d'/' -f1 | jq -R -c '{ "output": . }'
+EOT
+  ]
 }
 
 resource "null_resource" "setup_worker" {
