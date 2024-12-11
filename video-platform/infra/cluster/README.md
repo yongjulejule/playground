@@ -14,3 +14,10 @@
 terraform init
 
 terraform apply
+
+성공하면 kubeconfig 파일이 생성됨
+
+`export KUBECONFIG=$(pwd)/.kube/config`
+`kubectl get nodes`
+
+노드들이 생성되어 있으면 성공
