@@ -1,0 +1,20 @@
+image:
+  repository: mongo
+  tag: noble
+  pullPolicy: IfNotPresent
+auth:
+  rootPassword: example
+  username: admin
+  password: password
+  database: video
+persistence:
+  enabled: true
+  existingClaim: mongo-pvc
+  mountPath: /data/db
+
+podSecurityContext:
+  fsGroup: 1001 # MongoDB의 기본 그룹 ID
+
+containerSecurityContext:
+  runAsUser: 1001 # MongoDB의 기본 사용자 ID
+  runAsGroup: 1001
