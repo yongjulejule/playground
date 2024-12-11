@@ -10,9 +10,6 @@ ENV PATH=$PNPM_HOME:$PATH
 # Enable Corepack and install pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# Install global Nx CLI
-RUN pnpm add -g nx
-
 # Stage 2: Install dependencies
 FROM base AS dependencies
 
@@ -39,7 +36,7 @@ FROM dependencies AS build
 
 # Copy the entire workspace and build
 COPY . .
-RUN pnpm nx build history --skip-nx-cache
+RUN pnpm --filter '@video-platform/history'  build
 
 # Stage 5: Production-ready image
 FROM node:22-alpine AS prod
@@ -47,7 +44,7 @@ FROM node:22-alpine AS prod
 WORKDIR /usr/src/app
 
 # Copy built application
-COPY --from=build /usr/src/app/dist/apps/history ./dist
+COPY --from=build /usr/src/app/apps/history/dist ./dist
 
 # Set environment variables
 ENV NODE_ENV=production
@@ -55,4 +52,4 @@ ENV PORT=8080
 EXPOSE 8080
 
 # Start the production application
-CMD ["node", "dist/main.js"]
+CMD ["node", "dist/index.js"]

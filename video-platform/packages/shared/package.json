@@ -10,12 +10,13 @@
   "dependencies": {
     "amqplib": "^0.10.5",
     "fp-ts": "^2.16.9",
-    "io-ts": "^2.2.21",
-    "mongoose": "^8.8.3"
+    "io-ts": "^2.2.22",
+    "mongoose": "^8.8.4"
   },
   "devDependencies": {
-    "@types/amqplib": "^0.10.5",
-    "@types/node": "22.10.1"
+    "@types/amqplib": "^0.10.6",
+    "@types/node": "22.10.1",
+    "esbuild": "^0.24.0"
   },
   "engines": {
     "node": ">=22.9.0"

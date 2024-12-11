@@ -1,0 +1,16 @@
+{
+  "targets": {
+    "docker-build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker build -f apps/video-streaming/Dockerfile --target prod -t yongjulejule/video-streaming ."
+      }
+    },
+    "docker-push": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker push yongjulejule/video-streaming"
+      }
+    }
+  }
+}

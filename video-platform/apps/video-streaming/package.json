@@ -5,17 +5,19 @@
     "test": "pnpm exec vitest",
     "test:watch": "pnpm exec vitest --watch=true",
     "start": "pnpm exec tsx src/index.ts",
-    "start:dev": "DEBUG=true PORT=3000 pnpm exec tsx watch src/index.ts"
+    "start:dev": "DEBUG=true PORT=3000 pnpm exec tsx watch src/index.ts",
+    "build": "pnpm exec esbuild src/index.ts --bundle --minify --platform=node --outfile=dist/index.js"
   },
   "dependencies": {
     "@video-platform/shared": "workspace:*",
     "amqplib": "^0.10.5",
     "fp-ts": "^2.16.9",
-    "io-ts": "^2.2.21",
-    "mongoose": "^8.8.3"
+    "io-ts": "^2.2.22",
+    "mongoose": "^8.8.4"
   },
   "devDependencies": {
-    "@types/amqplib": "^0.10.5",
+    "@types/amqplib": "^0.10.6",
+    "esbuild": "^0.24.0",
     "tsx": "^4.19.2"
   }
 }
