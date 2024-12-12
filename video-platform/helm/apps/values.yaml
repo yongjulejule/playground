@@ -1,0 +1,36 @@
+# Default values for apps.
+replicaCount: 1
+
+image:
+  repository: your-docker-repo/app
+  tag: latest
+  pullPolicy: Always
+
+service:
+  type: ClusterIP
+  port: 8080
+
+env: [] # 환경 변수는 각 서비스에서 오버라이드
+
+resources: {}
+
+serviceAccount:
+  create: true
+  name: ""
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+ingress:
+  enabled: true
+  host: example.local
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  paths:
+    - path: /
+      pathType: Prefix
+  tls: []

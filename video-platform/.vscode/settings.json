@@ -1,0 +1,7 @@
+{
+  "helm-intellisense.customValueFileNames": [
+    "values.yaml",
+    "video-streaming.dev.values.yaml",
+    "history.dev.values.yaml"
+  ]
+}

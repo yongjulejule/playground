@@ -1,0 +1,27 @@
+image:
+  repository: yongjulejule/history
+  tag: latest
+
+service:
+  port: 8081
+
+ingress:
+  enabled: true
+  hosts:
+    - host: history.local
+      paths:
+        - path: /
+          pathType: Prefix
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+  tls: []
+
+env:
+  - name: DEBUG
+    value: "true"
+  - name: PORT
+    value: "8081"
+  - name: NODE_ENV
+    value: "production"
+  - name: MONGO_URI
+    value: "mongodb://mongo:27017/history?authSource=admin"
