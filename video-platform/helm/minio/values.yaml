@@ -1,0 +1,16 @@
+accessKey: minioadmin
+secretKey: minioadmin
+replicas: 1
+mode: standalone
+persistence:
+  enabled: true
+  size: 2Gi
+  existingClaim: minio-pvc
+  storageClass: minio-storage
+resources:
+  requests:
+    memory: 128Mi
+    cpu: 100m
+  limits:
+    memory: 256Mi
+    cpu: 200m
