@@ -45,6 +45,7 @@ helm install mongo bitnami/mongodb -f helm/mongo/values.yaml
 - bitnami/mongodb docker image 가 arm64 지원 안함 -> mongo 이미지로 변경
 - 만들어진 pv / pvc 가 노드의 /mnt/data 에 바인드 되는데, 이때 권한때문에 막힘
   - 노드에 직접 접속해서 권한 바꿔주면 됨 (sudo chown -R 1001:1001 /mnt/data/mongo)
+- 자꾸 유저 생성 안돼서 집적 mongosh 로 접속해서 유저 생성함... 원인 찾아야함
 
 ### 내 서비스
 
@@ -55,6 +56,9 @@ helm install mongo bitnami/mongodb -f helm/mongo/values.yaml
 - helm upgrade --install ./helm/apps -f ./helm/apps/<service values>.yaml
 
 ### RabbitMQ
+
+- kubectl apply -f helm/rabbitmq/
+- helm install rabbitmq bitnami/rabbitmq -f helm/rabbitmq/values.yaml
 
 ### MINIO
 

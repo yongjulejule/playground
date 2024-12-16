@@ -24,18 +24,12 @@ env:
   - name: NODE_ENV
     value: "production"
   - name: MONGO_URI
-    value: "mongodb://mongo:27017/video?authSource=admin"
+    value: "mongodb://admin:password@mongo-mongodb:27017/video?authSource=admin"
   - name: MINIO_ENDPOINT
-    value: "http://video-storage:9000"
+    value: "http://video-storage-minio:9000"
   - name: MINIO_ACCESS_KEY
-    value: "minio"
-    # valueFrom:
-    #   secretKeyRef:
-    #     name: minio-secret
-    #     key: accesskey
+    value: "minioadmin"
   - name: MINIO_SECRET_KEY
-    value: "minio-sec"
-    # valueFrom:
-    #   secretKeyRef:
-    #     name: minio-secret
-    #     key: secretkey
+    value: "minioadmin"
+  - name: RABBITMQ_URI
+    value: "amqp://user:password@rabbitmq:5672"

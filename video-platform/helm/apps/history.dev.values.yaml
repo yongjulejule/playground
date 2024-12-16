@@ -24,4 +24,6 @@ env:
   - name: NODE_ENV
     value: "production"
   - name: MONGO_URI
-    value: "mongodb://mongo:27017/history?authSource=admin"
+    value: "mongodb://admin:password@mongo-mongodb:27017/video?authSource=admin"
+  - name: RABBITMQ_URI
+    value: "amqp://user:password@rabbitmq:5672"

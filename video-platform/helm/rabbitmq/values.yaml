@@ -1,0 +1,22 @@
+auth:
+  username: user
+  password: password
+  erlangCookie: my-secret-cookie
+
+replicaCount: 1 # RabbitMQ를 단일 Pod로 실행
+
+resources:
+  requests:
+    memory: 128Mi
+    cpu: 100m
+  limits:
+    memory: 256Mi
+    cpu: 200m
+
+persistence:
+  enabled: true
+  storageClass: rabbitmq-storage # 사용하는 StorageClass 이름
+  existingClaim: rabbitmq-pvc
+
+service:
+  type: LoadBalancer # 외부 접속을 위해 LoadBalancer 사용

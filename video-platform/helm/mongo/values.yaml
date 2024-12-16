@@ -3,6 +3,7 @@ image:
   tag: noble
   pullPolicy: IfNotPresent
 auth:
+  enabled: true
   rootPassword: example
   username: admin
   password: password

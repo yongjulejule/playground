@@ -1,4 +1,9 @@
 
+help:
+	@echo "make start-cluster"
+	@echo "make stop-cluster"
+	@echo "make helm-install"
+
 start-cluster:
 	limactl start k8s-master
 	limactl start k8s-worker
