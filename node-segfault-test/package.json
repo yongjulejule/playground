@@ -1,0 +1,13 @@
+{
+  "name": "prisma-gc-test",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node --expose-gc index.js"
+  },
+  "dependencies": {
+    "@prisma/client": "6.15.0",
+    "prisma": "6.15.0"
+  }
+}
+

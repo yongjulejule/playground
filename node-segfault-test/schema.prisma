@@ -1,0 +1,24 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// 1. 데이터베이스 연결 설정
+datasource db {
+  provider = "postgresql" // 사용하는 데이터베이스 종류
+  url      = env("DATABASE_URL") // 환경 변수에서 DB 접속 주소를 가져옵니다.
+}
+
+// 2. Prisma Client 생성 설정
+generator client {
+  provider = "prisma-client-js"
+  
+  // 3. (가장 중요) Fargate 환경에 맞는 바이너리 타겟 명시
+  // Alpine 3.17+ 환경이므로 OpenSSL 3.0.x 버전을 지정합니다.
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+// 4. 테스트용 최소 모델 정의
+// 실제 쿼리를 날릴 수 있도록 간단한 테이블 모델을 하나 정의합니다.
+model Test {
+  id   Int    @id @default(autoincrement())
+  name String
+}
